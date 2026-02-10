@@ -57,6 +57,10 @@ export interface SecurityStatus {
 }
 
 export interface AppSettings {
+  companyName: string;
+  companyRif: string;
+  companyPhone: string;
+  companyAddress: string;
   absenceMessage: string;
   companyLogo?: string;
 }
