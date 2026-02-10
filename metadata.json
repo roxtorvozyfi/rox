@@ -1,0 +1,7 @@
+{
+  "name": "Gestor Roxtor Vozyfi NVO",
+  "description": "Gestión textil multidispositivo sincronizada por voz con Gemini Live API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
