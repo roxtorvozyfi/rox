@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#1e3a8a">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968841.png">
     <link rel="manifest" href="manifest.json">
-    <title>Roxtor Vozify 1.2</title>
+    <title>Roxtor Vozify</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -27,9 +27,6 @@
           min-height: 100%;
           display: flex;
           flex-direction: column;
-        }
-        .pb-safe {
-          padding-bottom: env(safe-area-inset-bottom);
         }
     </style>
 <script type="importmap">
@@ -48,16 +45,16 @@
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="index.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js?v=2').then(reg => {
+          // Eliminado ?v=2 para evitar que Vite intente procesarlo como asset con extensión .0
+          navigator.serviceWorker.register('/sw.js').then(reg => {
             reg.onupdatefound = () => {
               const installingWorker = reg.installing;
               installingWorker.onstatechange = () => {
                 if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Avisar al usuario o recargar
                   window.location.reload();
                 }
               };
