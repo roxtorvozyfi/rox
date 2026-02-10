@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Product, Order, WorkshopGroup, PaymentMethod, AppSettings } from './types';
 import CatalogManager from './components/CatalogManager';
 import VoiceAssistant from './components/VoiceAssistant';
 import OperationsManager from './components/OperationsManager';
-import { Mic, LayoutDashboard, ClipboardList, Lock, ShieldCheck, Cloud, CloudOff, CloudSync } from 'lucide-react';
+import { Mic, LayoutDashboard, ClipboardList, Lock, ShieldCheck, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'catalog' | 'assistant' | 'operations'>('assistant');
@@ -46,25 +45,20 @@ const App: React.FC = () => {
   
   const isInitialMount = useRef(true);
 
-  // FUNCIÓN DE SINCRONIZACIÓN REAL (CLOUD)
   const syncWithCloud = useCallback(async (key: string, dataToPush?: any) => {
     if (!key || key.length < 4) return;
     
     setSyncStatus('syncing');
     try {
-      // Utilizamos un servicio de KV storage público (ejemplo simulado con persistencia externa)
-      // Para un entorno real, aquí se llamaría a una API de base de datos
       const STORAGE_URL = `https://kvstore.com/api/v1/items/${key}`;
       
       if (dataToPush) {
-        // PUSH: Enviar datos al servidor
         await fetch(STORAGE_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...dataToPush, updatedAt: new Date().toISOString() })
         });
       } else {
-        // PULL: Traer datos del servidor
         const response = await fetch(STORAGE_URL);
         if (response.ok) {
           const cloudData = await response.json();
@@ -83,11 +77,9 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Guardado local y disparo de sincronización
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-      // Al iniciar, si hay llave, intentamos traer lo último de la nube
       if (syncKey) syncWithCloud(syncKey);
       return;
     }
@@ -101,12 +93,11 @@ const App: React.FC = () => {
     if (syncKey) {
       const timeout = setTimeout(() => {
         syncWithCloud(syncKey, { products, orders, groups, paymentMethods, settings });
-      }, 2000); // Debounce de 2 segundos para no saturar la red
+      }, 2000);
       return () => clearTimeout(timeout);
     }
   }, [products, orders, groups, paymentMethods, settings, syncKey, syncWithCloud]);
 
-  // Polling automático cada 60 segundos para recibir cambios de otros dispositivos
   useEffect(() => {
     if (!syncKey) return;
     const interval = setInterval(() => {
@@ -191,7 +182,7 @@ const App: React.FC = () => {
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Soluciones Creativas</p>
                 {syncKey && (
                   <div className="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full">
-                    {syncStatus === 'syncing' ? <CloudSync size={10} className="text-blue-500 animate-spin"/> : 
+                    {syncStatus === 'syncing' ? <RefreshCw size={10} className="text-blue-500 animate-spin"/> : 
                      syncStatus === 'success' ? <Cloud size={10} className="text-emerald-500"/> :
                      <CloudOff size={10} className="text-red-400"/>}
                     <span className="text-[8px] font-bold text-slate-500 uppercase">{lastSyncTime || 'OK'}</span>
